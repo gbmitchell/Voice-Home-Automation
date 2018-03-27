@@ -1,0 +1,26 @@
+{
+  "desired": {
+    "KitchenLight": 1,
+    "Door": 0,
+    "Window": 0,
+    "AtticLight": 0,
+    "BedroomLight": 0,
+    "BathroomLight": 0,
+    "LivingroomLight": 0,
+    "KitchenTemp": 65,
+    "LivingroomTemp": 70,
+    "BedroomTemp": 72
+  },
+  "delta": {
+    "KitchenLight": 1,
+    "Door": 0,
+    "Window": 0,
+    "AtticLight": 0,
+    "BedroomLight": 0,
+    "BathroomLight": 0,
+    "LivingroomLight": 0,
+    "KitchenTemp": 65,
+    "LivingroomTemp": 70,
+    "BedroomTemp": 72
+  }
+}

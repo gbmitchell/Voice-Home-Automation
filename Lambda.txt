@@ -1,0 +1,522 @@
+'use strict';
+
+/* ----------------------- IoT Configuration -------------------------------- */
+
+var config = {};
+
+config.IOT_BROKER_ENDPOINT = "your endpoint goes here".toLowerCase();
+
+config.IOT_BROKER_REGION = "your region goes here";
+
+config.IOT_THING_NAME = "your thing name goes here";
+
+// Load AWS SDK libraries
+var AWS = require('aws-sdk');
+
+AWS.config.region = config.IOT_BROKER_REGION;
+
+// Initialize client for IoT
+var iotData = new AWS.IotData({endpoint: config.IOT_BROKER_ENDPOINT});
+
+/* -------------------- end: IoT Configuration ------------------------------ */
+
+
+/* ------------ Helpers that build all of the responses --------------------- */
+
+function buildSpeechletResponse(title, output, repromptText, shouldEndSession) {
+
+    return {
+        outputSpeech: {
+            type: 'PlainText',
+            text: output,
+        },
+        card: {
+            type: 'Simple',
+            title: `SessionSpeechlet - ${title}`,
+            content: `SessionSpeechlet - ${output}`,
+        },
+        reprompt: {
+            outputSpeech: {
+                type: 'PlainText',
+                text: repromptText,
+            },
+        },
+        shouldEndSession,
+    };
+
+}
+
+function buildResponse(sessionAttributes, speechletResponse) {
+
+    return {
+        version: '1.0',
+        sessionAttributes,
+        response: speechletResponse,
+    };
+
+}
+
+/* ---------- end: Helpers that build all of the responses ------------------ */
+
+
+/* ----------- Functions that control the skill's behavior ------------------ */
+
+function getWelcomeResponse(callback) {
+
+    // If we wanted to initialize the session to have some attributes we could add those here.
+    const sessionAttributes = {};
+    const cardTitle = 'Welcome';
+    const speechOutput = 'Please indicate your request';
+    // If the user either does not reply to the welcome message or says something that is not understood, they will be prompted again with this text.
+    const repromptText = 'Please indicate your request';
+    const shouldEndSession = false;
+
+    callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+
+}
+
+function handleSessionEndRequest(callback) {
+
+    const cardTitle = 'Session Ended';
+    const speechOutput = 'Have a nice day!';
+    // Setting this to true ends the session and exits the skill.
+    const shouldEndSession = true;
+
+    callback({}, buildSpeechletResponse(cardTitle, speechOutput, null, shouldEndSession));
+
+}
+
+function createFavoriteRelayStatusAttributes(desiredLightStatus) {
+
+    return {desiredLightStatus,};
+
+}
+
+/**
+ * Sets the relay state in the session and prepares the speech to reply to the user.
+ */
+function setStatus(intent, session, callback) {
+    
+    var desiredTempSlot;
+    var desiredStatusSlot;
+
+    const cardTitle = intent.name;
+    if(intent.name === 'SetTempK' || intent.name === 'SetTempL' || intent.name === 'SetTempB' ){
+        desiredTempSlot = intent.slots.temp.value;
+    }else{
+        desiredStatusSlot = intent.slots.Status.value;
+    }
+    var shadowLightStatus = 0;
+    var shadowTempStatus = 0;
+    let repromptText = '';
+    let sessionAttributes = {};
+    const shouldEndSession = false;
+    let speechOutput = '';
+    
+
+    if (desiredStatusSlot) {
+
+        const desiredLightStatus = desiredStatusSlot;
+        
+        if(intent.name === 'AtticSet'){
+            speechOutput = "attic light is " + desiredLightStatus;
+        }
+        if(intent.name === 'KitchenSet'){
+            speechOutput = "kitchen light is " + desiredLightStatus;
+        }
+        if(intent.name === 'BathroomSet'){
+            speechOutput = "bath room light is " + desiredLightStatus;
+        }
+        if(intent.name === 'BedroomSet'){
+            speechOutput = "bed room light is " + desiredLightStatus;
+        }
+        if(intent.name === 'LivingroomSet'){
+            speechOutput = "living room light is " + desiredLightStatus;
+        }
+        repromptText = 'Please indicate your request';
+        
+        /*
+         * Update AWS IoT
+        */
+        // Determine relay postition within shadow
+        
+        var payloadObj;
+        
+        if (desiredLightStatus === 'on') {shadowLightStatus = 1;}
+        
+        if(intent.name === 'AtticSet'){
+            payloadObj={ "state": { "desired": { "AtticLight": shadowLightStatus } } };
+        }
+        if(intent.name === 'BedroomSet'){
+            payloadObj={ "state": { "desired": { "BedroomLight": shadowLightStatus } } };
+        }
+        if(intent.name === 'BathroomSet'){
+            payloadObj={ "state": { "desired": { "BathroomLight": shadowLightStatus } } };
+        }
+        if(intent.name === 'KitchenSet'){
+            payloadObj={ "state": { "desired": { "KitchenLight": shadowLightStatus } } };
+        }
+        if(intent.name === 'LivingroomSet'){
+            payloadObj={ "state": { "desired": { "LivingroomLight": shadowLightStatus } } };
+        }
+        
+        
+        //Prepare the parameters of the update call
+        var paramsUpdate = {
+
+          "thingName" : config.IOT_THING_NAME,
+          "payload" : JSON.stringify(payloadObj)
+
+        };
+
+        // Update IoT Device Shadow
+        iotData.updateThingShadow(paramsUpdate, function(err, data) {
+
+          if (err){
+            console.log(err); // Handle any errors
+          }
+          else {
+            console.log(data);
+          }
+
+        });
+
+    } else if(desiredTempSlot) {
+        
+        const desiredTempStatus = desiredTempSlot;
+        
+        if(intent.name === 'SetTempK'){
+            speechOutput = "setting kitchen temp to " + desiredTempStatus;
+        }
+        if(intent.name === 'SetTempL'){
+            speechOutput = "setting living room temp to " + desiredTempStatus;
+        }
+        if(intent.name === 'SetTempB'){
+            speechOutput = "setting bedroom temp to " + desiredTempStatus;
+        }
+        repromptText = 'Please indicate your request';
+        
+        /*
+         * Update AWS IoT
+        */
+        // Determine relay postition within shadow
+        
+        console.log(desiredTempStatus);
+        if (desiredTempStatus === '60') {shadowTempStatus = 60;}
+        else if (desiredTempStatus === '61') {shadowTempStatus = 61;}
+        else if (desiredTempStatus === '62') {shadowTempStatus = 62;}
+        else if (desiredTempStatus === '63') {shadowTempStatus = 63;}
+        else if (desiredTempStatus === '64') {shadowTempStatus = 64;}
+        else if (desiredTempStatus === '65') {shadowTempStatus = 65;}
+        else if (desiredTempStatus === '66') {shadowTempStatus = 66;}
+        else if (desiredTempStatus === '67') {shadowTempStatus = 67;}
+        else if (desiredTempStatus === '68') {shadowTempStatus = 68;}
+        else if (desiredTempStatus === '69') {shadowTempStatus = 69;}
+        else if (desiredTempStatus === '70') {shadowTempStatus = 70;}
+        else if (desiredTempStatus === '71') {shadowTempStatus = 71;}
+        else if (desiredTempStatus === '72') {shadowTempStatus = 72;}
+        else if (desiredTempStatus === '73') {shadowTempStatus = 73;}
+        else if (desiredTempStatus === '74') {shadowTempStatus = 74;}
+        else if (desiredTempStatus === '75') {shadowTempStatus = 75;}
+        else if (desiredTempStatus === '76') {shadowTempStatus = 76;}
+        else if (desiredTempStatus === '77') {shadowTempStatus = 77;}
+        else if (desiredTempStatus === '78') {shadowTempStatus = 78;}
+        else if (desiredTempStatus === '79') {shadowTempStatus = 79;}
+        else if (desiredTempStatus === '80') {shadowTempStatus = 80;}
+        else if (desiredTempStatus === '81') {shadowTempStatus = 81;}
+        else if (desiredTempStatus === '82') {shadowTempStatus = 82;}
+        else if (desiredTempStatus === '83') {shadowTempStatus = 83;}
+        else if (desiredTempStatus === '84') {shadowTempStatus = 84;}
+        else if (desiredTempStatus === '85') {shadowTempStatus = 85;}
+        else if (desiredTempStatus === '86') {shadowTempStatus = 86;}
+        else if (desiredTempStatus === '87') {shadowTempStatus = 87;}
+        else if (desiredTempStatus === '88') {shadowTempStatus = 88;}
+        else if (desiredTempStatus === '89') {shadowTempStatus = 89;}
+        else if (desiredTempStatus === '90') {shadowTempStatus = 90;}
+        else if (desiredTempStatus === '91') {shadowTempStatus = 91;}
+        else if (desiredTempStatus === '92') {shadowTempStatus = 92;}
+        else if (desiredTempStatus === '93') {shadowTempStatus = 93;}
+        else if (desiredTempStatus === '94') {shadowTempStatus = 94;}
+        else if (desiredTempStatus === '95') {shadowTempStatus = 95;}
+        else if (desiredTempStatus === '96') {shadowTempStatus = 96;}
+        else if (desiredTempStatus === '97') {shadowTempStatus = 97;}
+        else if (desiredTempStatus === '98') {shadowTempStatus = 98;}
+        else if (desiredTempStatus === '99') {shadowTempStatus = 99;}
+        else{shadowTempStatus = 0;}
+        //shadowTempStatus = desiredTempStatus;
+        
+        if(shadowTempStatus === 0){
+            speechOutput = "I'm not sure if you want. Please try again.";
+            repromptText = "I'm not sure if you want. Please try again.";
+        }else {
+            if(intent.name === 'SetTempK'){
+                payloadObj={ "state": { "desired": { "KitchenTemp": shadowTempStatus } } };
+            }
+            if(intent.name === 'SetTempL'){
+                payloadObj={ "state": { "desired": { "LivingroomTemp": shadowTempStatus } } };
+            }
+            if(intent.name === 'SetTempB'){
+                payloadObj={ "state": { "desired": { "BedroomTemp": shadowTempStatus } } };
+            }
+            
+            
+            //Prepare the parameters of the update call
+            paramsUpdate = {
+    
+              "thingName" : config.IOT_THING_NAME,
+              "payload" : JSON.stringify(payloadObj)
+    
+            };
+    
+            // Update IoT Device Shadow
+            iotData.updateThingShadow(paramsUpdate, function(err, data) {
+    
+              if (err){
+                console.log(err); // Handle any errors
+              }
+              else {
+                console.log(data);
+              }
+    
+            });
+        }
+    
+    }else{
+
+        speechOutput = "I'm not sure if you want. Please try again.";
+        repromptText = "I'm not sure if you want. Please try again.";
+
+    }
+
+    callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+
+}
+
+
+
+function getStatus(intent, session, callback) {
+
+    const repromptText = null;
+    const sessionAttributes = {};
+    let shouldEndSession = false;
+    let speechOutput = '';
+    
+    
+    var paramsGet = {
+        "thingName" : config.IOT_THING_NAME,
+    };
+    
+    iotData.getThingShadow(paramsGet, function (err, data) {
+      if (err) {
+          console.log(err, err.stack);
+      }else{     
+          console.log(data);
+          JSON.stringify(data);
+          var payload = data.payload;
+          var dataObj = JSON.parse(payload);
+          
+          var Kitchen_temp = dataObj.state.desired.KitchenTemp;
+          var Livingroom_temp = dataObj.state.desired.LivingroomTemp;
+          var Bedroom_temp = dataObj.state.desired.BedroomTemp;
+          
+          var Attic_light; 
+          if (dataObj.state.desired.AtticLight === 1){
+              Attic_light = 'on';
+          }else{
+              Attic_light = 'off';
+          }
+          
+          var Kitchen_light;
+          if (dataObj.state.desired.KitchenLight === 1){
+              Kitchen_light = 'on';
+          }else{
+              Kitchen_light = 'off';
+          }
+          
+          var Bedroom_light;
+          if (dataObj.state.desired.BedroomLight === 1){
+              Bedroom_light = 'on';
+          }else{
+              Bedroom_light = 'off';
+          }
+          
+          var Bathroom_light;
+          if (dataObj.state.desired.BathroomLight === 1){
+              Bathroom_light = 'on';
+          }else{
+              Bathroom_light = 'off';
+          }
+          
+          var Livingroom_light;
+          if (dataObj.state.desired.LivingroomLight === 1){
+              Livingroom_light = 'on';
+          }else{
+              Livingroom_light = 'off';
+          }
+          
+          var Door_open;
+          if (dataObj.state.desired.Door === 1){
+              Door_open = 'open';
+          }else{
+              Door_open = 'closed';
+          }
+          
+          var Window_open;
+          if (dataObj.state.desired.Window === 1){
+              Window_open = 'open';
+          }else{
+              Window_open = 'closed';
+          }
+          
+          
+          if(intent.name === 'AtticGet') {speechOutput = 'the attic light is ' + Attic_light;}
+          else if(intent.name === 'KitchenGet') {speechOutput = 'the kitchen light is ' + Kitchen_light;}
+          else if(intent.name === 'BedroomGet') {speechOutput = 'the bed room light is ' + Bedroom_light;}
+          else if(intent.name === 'BathroomGet') {speechOutput = 'the bath room light is ' + Bathroom_light;}
+          else if(intent.name === 'LivingroomGet') {speechOutput = 'the living room light is ' + Livingroom_light;}
+          else if(intent.name === 'ReadTempK') {speechOutput = 'the kitchen temperature is ' + Kitchen_temp;}
+          else if(intent.name === 'ReadTempL') {speechOutput = 'the living room temperature is ' + Livingroom_temp;}
+          else if(intent.name === 'ReadTempB') {speechOutput = 'the bed room temperature is ' + Bedroom_temp;}
+          else if(intent.name === 'Door') {speechOutput = 'the door is ' + Door_open;}
+          else if(intent.name === 'Window') {speechOutput = 'the window is ' + Window_open;}
+          else if(intent.name === 'GetAll') {speechOutput = 'the door is     ' + Door_open + '     the window is ' + Window_open + '     the attic light is ' + Attic_light + 
+            '     the kitchen light is ' + Kitchen_light + '     the bed room light is ' + Bedroom_light + '     the bath room light is ' + Bathroom_light +
+            '     the living room light is ' + Livingroom_light + '     the kitchen temperature is ' + Kitchen_temp + '     the living room temperature is ' + Livingroom_temp +
+            '     the bed room temperature is ' + Bedroom_temp;}
+          
+          shouldEndSession = true;
+          callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
+      }           // successful response
+    });
+    
+    
+    // Setting repromptText to null signifies that we do not want to reprompt the user.
+    // If the user does not respond or says something that is not understood, the session
+    // will end.
+    
+
+}
+
+/* --------- end: Functions that control the skill's behavior --------------- */
+
+
+/* ----------------------------- Events ------------------------------------- */
+
+/**
+ * Called when the session starts.
+ */
+function onSessionStarted(sessionStartedRequest, session) {
+    console.log(`onSessionStarted requestId=${sessionStartedRequest.requestId}, sessionId=${session.sessionId}`);
+}
+
+/**
+ * Called when the user launches the skill without specifying what they want.
+ */
+function onLaunch(launchRequest, session, callback) {
+
+    console.log(`onLaunch requestId=${launchRequest.requestId}, sessionId=${session.sessionId}`);
+
+    // Dispatch to your skill's launch.
+    getWelcomeResponse(callback);
+
+}
+
+/**
+ * Called when the user specifies an intent for this skill.
+ */
+function onIntent(intentRequest, session, callback) {
+
+    console.log(`onIntent requestId=${intentRequest.requestId}, sessionId=${session.sessionId}`);
+
+    const intent = intentRequest.intent;
+    const intentName = intentRequest.intent.name;
+
+    // Dispatch to your skill's intent handlers
+    if (intentName === 'AtticSet') {setStatus(intent, session, callback);}
+    else if (intentName === 'BedroomSet') {setStatus(intent, session, callback);}
+    else if (intentName === 'BathroomSet') {setStatus(intent, session, callback);}
+    else if (intentName === 'KitchenSet') {setStatus(intent, session, callback);}
+    else if (intentName === 'LivingroomSet') {setStatus(intent, session, callback);}
+    else if (intentName === 'SetTempK') {setStatus(intent, session, callback);}
+    else if (intentName === 'SetTempL') {setStatus(intent, session, callback);}
+    else if (intentName === 'SetTempB') {setStatus(intent, session, callback);}
+    else if (intentName === 'AtticGet') {getStatus(intent, session, callback);}
+    else if (intentName === 'BedroomGet') {getStatus(intent, session, callback);}
+    else if (intentName === 'BathroomGet') {getStatus(intent, session, callback);}
+    else if (intentName === 'KitchenGet') {getStatus(intent, session, callback);}
+    else if (intentName === 'LivingroomGet') {getStatus(intent, session, callback);}
+    else if (intentName === 'ReadTempK') {getStatus(intent, session, callback);}
+    else if (intentName === 'ReadTempL') {getStatus(intent, session, callback);}
+    else if (intentName === 'ReadTempB') {getStatus(intent, session, callback);}
+    else if (intentName === 'Door') {getStatus(intent, session, callback);}
+    else if (intentName === 'Window') {getStatus(intent, session, callback);}
+    else if (intentName === 'GetAll') {getStatus(intent, session, callback);}
+    else if (intentName === 'AMAZON.HelpIntent') {getWelcomeResponse(callback);}
+    else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {handleSessionEndRequest(callback);}
+    else {throw new Error('Invalid intent');}
+    
+
+}
+
+/**
+ * Called when the user ends the session.
+ * Is not called when the skill returns shouldEndSession=true.
+ */
+function onSessionEnded(sessionEndedRequest, session) {
+
+    console.log(`onSessionEnded requestId=${sessionEndedRequest.requestId}, sessionId=${session.sessionId}`);
+    // Add cleanup logic here
+
+}
+
+/* --------------------------- end: Events ---------------------------------- */
+
+
+/* -------------------------- Main handler ---------------------------------- */
+
+// Route the incoming request based on type (LaunchRequest, IntentRequest, etc.) The JSON body of the request is provided in the event parameter.
+exports.handler = (event, context, callback) => {
+
+    try {
+
+        console.log(`event.session.application.applicationId=${event.session.application.applicationId}`);
+
+        /**
+         * Uncomment this if statement and populate with your skill's application ID to
+         * prevent someone else from configuring a skill that sends requests to this function.
+         */
+        /*
+        if (event.session.application.applicationId !== 'amzn1.echo-sdk-ams.app.[unique-value-here]') {
+             callback('Invalid Application ID');l
+        }
+        */
+
+        if (event.session.new) {
+            onSessionStarted({ requestId: event.request.requestId }, event.session);
+        }
+
+        if (event.request.type === 'LaunchRequest') {
+            onLaunch(event.request,
+                event.session,
+                (sessionAttributes, speechletResponse) => {
+                    callback(null, buildResponse(sessionAttributes, speechletResponse));
+                });
+        }
+        else if (event.request.type === 'IntentRequest') {
+            onIntent(event.request,
+                event.session,
+                (sessionAttributes, speechletResponse) => {
+                    callback(null, buildResponse(sessionAttributes, speechletResponse));
+                });
+        }
+        else if (event.request.type === 'SessionEndedRequest') {
+            onSessionEnded(event.request, event.session);
+            callback();
+        }
+
+    }
+    catch (err) {callback(err);}
+
+};
+
+/* ----------------------- end: Main handler -------------------------------- */

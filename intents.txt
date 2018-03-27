@@ -1,0 +1,527 @@
+{
+  "languageModel": {
+    "types": [
+      {
+        "name": "LIST_OF_STATUSES",
+        "values": [
+          {
+            "id": null,
+            "name": {
+              "value": "on",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "off",
+              "synonyms": []
+            }
+          }
+        ]
+      },
+      {
+        "name": "LIST_OF_TEMPS",
+        "values": [
+          {
+            "id": null,
+            "name": {
+              "value": "sixty",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty one",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty two",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty three",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty four",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty five",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty six",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty seven",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty eight",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "sixty nine",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy one",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy two",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy three",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy four",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy five",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy six",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy seven",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy eight",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "seventy nine",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty one",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty two",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty three",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty four",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty five",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty six",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty seven",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty eight",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "eighty nine",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety one",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety two",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety three",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety four",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety five",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety six",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety seven",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety eight",
+              "synonyms": []
+            }
+          },
+          {
+            "id": null,
+            "name": {
+              "value": "ninety nine",
+              "synonyms": []
+            }
+          }
+        ]
+      }
+    ],
+    "intents": [
+      {
+        "name": "AMAZON.CancelIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.HelpIntent",
+        "samples": []
+      },
+      {
+        "name": "AMAZON.StopIntent",
+        "samples": []
+      },
+      {
+        "name": "AtticGet",
+        "samples": [
+          "is the attic light on or off"
+        ],
+        "slots": []
+      },
+      {
+        "name": "AtticSet",
+        "samples": [
+          "attic light {Status}",
+          "turn attic light {Status}",
+          "turn {Status} attic light"
+        ],
+        "slots": [
+          {
+            "name": "Status",
+            "type": "LIST_OF_STATUSES"
+          }
+        ]
+      },
+      {
+        "name": "BathroomGet",
+        "samples": [
+          "is the bathroom light on or off"
+        ],
+        "slots": []
+      },
+      {
+        "name": "BathroomSet",
+        "samples": [
+          "bathroom light {Status}",
+          "turn bathroom light {Status}",
+          "turn {Status} bathroom light"
+        ],
+        "slots": [
+          {
+            "name": "Status",
+            "type": "LIST_OF_STATUSES"
+          }
+        ]
+      },
+      {
+        "name": "BedroomGet",
+        "samples": [
+          "is the bedroom light on or off"
+        ],
+        "slots": []
+      },
+      {
+        "name": "BedroomSet",
+        "samples": [
+          "bedroom light {Status}",
+          "turn bedroom light {Status}",
+          "turn {Status} bedroom light"
+        ],
+        "slots": [
+          {
+            "name": "Status",
+            "type": "LIST_OF_STATUSES"
+          }
+        ]
+      },
+      {
+        "name": "Door",
+        "samples": [
+          "is the door open or closed",
+          "door status",
+          "door"
+        ],
+        "slots": []
+      },
+      {
+        "name": "GetAll",
+        "samples": [
+          "home status"
+        ],
+        "slots": []
+      },
+      {
+        "name": "KitchenGet",
+        "samples": [
+          "is the kitchen light on or off"
+        ],
+        "slots": []
+      },
+      {
+        "name": "KitchenSet",
+        "samples": [
+          "kitchen light {Status}",
+          "turn kitchen light {Status}",
+          "turn {Status}  kitchen light"
+        ],
+        "slots": [
+          {
+            "name": "Status",
+            "type": "LIST_OF_STATUSES"
+          }
+        ]
+      },
+      {
+        "name": "LivingroomGet",
+        "samples": [
+          "is the livingroom light on or off"
+        ],
+        "slots": []
+      },
+      {
+        "name": "LivingroomSet",
+        "samples": [
+          "livingroom light {Status}",
+          "turn livingroom light {Status}",
+          "turn {Status}  livingroom light"
+        ],
+        "slots": [
+          {
+            "name": "Status",
+            "type": "LIST_OF_STATUSES"
+          }
+        ]
+      },
+      {
+        "name": "ReadTempB",
+        "samples": [
+          "get the bedroom temp",
+          "what is the bedroom temperature"
+        ],
+        "slots": []
+      },
+      {
+        "name": "ReadTempK",
+        "samples": [
+          "get kitchen temp",
+          "what is the kitchen temperature"
+        ],
+        "slots": []
+      },
+      {
+        "name": "ReadTempL",
+        "samples": [
+          "get the living room temp",
+          "what is the living room temperature"
+        ],
+        "slots": []
+      },
+      {
+        "name": "SetTempB",
+        "samples": [
+          "set the bedroom temp {temp}",
+          "change bedroom temp temperature to {temp}",
+          "set bedroom temperature to {temp}",
+          "change the bedroom temp temperature to {temp} degrees",
+          "set the bedroom temperature to {temp} degrees"
+        ],
+        "slots": [
+          {
+            "name": "temp",
+            "type": "LIST_OF_TEMPS"
+          }
+        ]
+      },
+      {
+        "name": "SetTempK",
+        "samples": [
+          "set kitchen temp {temp}",
+          "change kitchen temperature to {temp}",
+          "set kitchen temperature to {temp}",
+          "change the kitchen temperature to {temp} degrees",
+          "set the kitchen temperature to {temp} degrees"
+        ],
+        "slots": [
+          {
+            "name": "temp",
+            "type": "LIST_OF_TEMPS"
+          }
+        ]
+      },
+      {
+        "name": "SetTempL",
+        "samples": [
+          "set living room temp {temp}",
+          "change living room temperature to {temp}",
+          "set living room temperature to {temp}",
+          "change the living room temperature to {temp} degrees",
+          "set the living room temperature to {temp} degrees"
+        ],
+        "slots": [
+          {
+            "name": "temp",
+            "type": "LIST_OF_TEMPS"
+          }
+        ]
+      },
+      {
+        "name": "Window",
+        "samples": [
+          "is the window open or closed",
+          "window status",
+          "window"
+        ],
+        "slots": []
+      }
+    ],
+    "invocationName": "home test"
+  }
+}

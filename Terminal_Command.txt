@@ -1,0 +1,3 @@
+To run the program, type the following command into the terminal. Be sure to insert your endpoint and thing name first.
+
+python3 MQTT_Server.py -e <your endpoint here> -r rootCA.crt -c <thing name>.cert.pem -k <thing name>.private.key -n <thing name>
