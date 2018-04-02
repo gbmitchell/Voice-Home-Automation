@@ -25,6 +25,7 @@ import serial
 ser = serial.Serial('/dev/ttyACM0', 9600)
 
 
+
 # Shadow JSON schema:
 #
 # Name: Bot
@@ -72,41 +73,55 @@ def customShadowCallback_Delta(payload, responseStatus, token):
     print("version: " + str(payloadDict["version"]))
     print("+++++++++++++++++++++++\n\n")
     
-    if str(payloadDict["state"]["AtticLight"]) == "1":
-        ser.write(bytes(b'1'))
-        #ime.sleep(3)
-    if str(payloadDict["state"]["AtticLight"]) == "0":
-        ser.write(bytes(b'2'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["KitchenLight"]) == "1":
-        ser.write(bytes(b'3'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["KitchenLight"]) == "0":
-        ser.write(bytes(b'4'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["BedroomLight"]) == "1":
-        ser.write(bytes(b'5'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["BedroomLight"]) == "0":
-        ser.write(bytes(b'6'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["BathroomLight"]) == "1":
-        ser.write(bytes(b'7'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["BathroomLight"]) == "0":
-        ser.write(bytes(b'8'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["LivingroomLight"]) == "1":
-        ser.write(bytes(b'9'))
-        #time.sleep(3)
-    if str(payloadDict["state"]["LivingroomLight"]) == "0":
-        ser.write(bytes(b'19'))
-        #time.sleep(3)
- 
     
-
-
-
+    if str(payloadDict["state"]["AtticLight"]) == "1":
+        ser.write(bytes(b'aaaa'))
+        #time.sleep(3)
+    else:
+        ser.write(bytes(b'bbbb'))
+        #time.sleep(3)
+        
+    if str(payloadDict["state"]["KitchenLight"]) == "1":
+        ser.write(bytes(b'cccc'))
+        #time.sleep(3)
+    else:
+        ser.write(bytes(b'dddd'))
+        #time.sleep(3)
+        
+    if str(payloadDict["state"]["BedroomLight"]) == "1":
+        ser.write(bytes(b'eeee'))
+        #time.sleep(3)
+    else:
+        ser.write(bytes(b'ffff'))
+        #time.sleep(3)
+        
+    if str(payloadDict["state"]["BathroomLight"]) == "1":
+        ser.write(bytes(b'gggg'))
+        #time.sleep(3)
+    else:
+        ser.write(bytes(b'hhhh'))
+        #time.sleep(3)
+        
+    if str(payloadDict["state"]["LivingroomLight"]) == "1":
+        ser.write(bytes(b'iiii'))
+        #time.sleep(3)
+    else:
+        ser.write(bytes(b'jjjj'))
+        #time.sleep(3)
+    
+    TL = 'tl' + str(payloadDict["state"]["LivingroomTemp"])
+    
+    ser.write(bytes(TL, 'utf-8'))
+    
+    TB = 'tb' + str(payloadDict["state"]["BedroomTemp"])
+    
+    ser.write(bytes(TB, 'utf-8'))
+    
+    TA = 'ta' + str(payloadDict["state"]["KitchenTemp"])
+    
+    ser.write(bytes(TA, 'utf-8'))
+    
+    
 # Read in command-line parameters
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--endpoint", action="store", required=True, dest="host", help="Your AWS IoT custom endpoint")
@@ -169,32 +184,41 @@ deviceShadowHandler = myAWSIoTMQTTShadowClient.createShadowHandlerWithName(thing
 # Listen on deltas
 deviceShadowHandler.shadowRegisterDeltaCallback(customShadowCallback_Delta)
 
+
 # Loop forever
-while True:
-    
-    
-    #inputDoor = input('door open or closed? : ')
-    #
-    
-    #print(inputWindow)
-    #print(inputDoor)
-    
-
-    JSONPayload = '{"state":{"desired":{"Window":' + str(1) + ',"Door":' + str(1) + '}}}'
-    deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
-    stateChange = True
-
-    
-    while stateChange == True:
-        while ser.in_waiting:
-            print(ser.readline())
-        #ser.write(bytes(b'93'))
-        #time.sleep(2)
-        #if str(payloadDict["state"]["KitchenTemp"]) == "on":
-        #ser.write(bytes(b'3'))
-        #if str(payloadDict["state"]["KitchenTemp"]) == "off":
-        #ser.write(bytes(b'3'))
-    
-
-    
-
+while True :
+    while ser.in_waiting:
+        mytest = ser.read()
+        dump = ser.read()
+        dump = ser.read()
+        print(mytest)
+        if mytest == b'a' :
+            JSONPayload = '{"state":{"desired":{"AtticLight":' + str(1) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'b' :
+            JSONPayload = '{"state":{"desired":{"AtticLight":' + str(0) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'c' :
+            JSONPayload = '{"state":{"desired":{"KitchenLight":' + str(1) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'd' :
+            JSONPayload = '{"state":{"desired":{"KitchenLight":' + str(0) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'e' :
+            JSONPayload = '{"state":{"desired":{"BedroomLight":' + str(1) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'f' :
+            JSONPayload = '{"state":{"desired":{"BedroomLight":' + str(0) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'g' :
+            JSONPayload = '{"state":{"desired":{"BathroomLight":' + str(1) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'h' :
+            JSONPayload = '{"state":{"desired":{"BathroomLight":' + str(0) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'i' :
+            JSONPayload = '{"state":{"desired":{"LivingroomLight":' + str(1) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
+        elif mytest == b'j' :
+            JSONPayload = '{"state":{"desired":{"LivingroomLight":' + str(0) + '}}}'
+            deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
