@@ -1,4 +1,4 @@
-# Python Code for Raspberry Pi
+# Code for Arduino Uno Controller
 
     // initialize global variables
     int AtticLightState = 0;
