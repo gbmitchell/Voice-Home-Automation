@@ -224,6 +224,6 @@
             elif mytest == b'j' :
                 JSONPayload = '{"state":{"desired":{"LivingroomLight":' + str(0) + '}}}'
                 deviceShadowHandler.shadowUpdate(JSONPayload, customShadowCallback_Update, 5)
-    
-    
+  
+  
 #### [Voice Home Automation](https://gbmitchell.github.io/Voice-Home-Automation/main)
