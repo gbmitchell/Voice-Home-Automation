@@ -1,4 +1,5 @@
 # Python Code for Raspberry Pi
+### (note: The AWSIoTPythonSDK folder contains libraries you will need to run this code.)
 
     /*
      * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
