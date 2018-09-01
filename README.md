@@ -1,4 +1,4 @@
-## Main page for Voice Home Automation Project
+## Voice Home Automation Project README.md
 
 The repository that you are looking at is for code used in a voice home automation project.
 
