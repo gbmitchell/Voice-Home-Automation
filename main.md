@@ -6,6 +6,6 @@ The repository that you are looking at is for code used in a voice home automati
 
 * [Code for MQTT Server on Raspbery PI](https://gbmitchell.github.io/Voice-Home-Automation/Pi_MQTT_server/main)
 * [Code for Arduino Uno Controller](https://gbmitchell.github.io/Voice-Home-Automation/Light_Temp_MPI_V4/main)
-  
+* [Instructables Link to the Project](https://www.instructables.com/id/Voice-Home-Automation/)
   
 #### [Home Page](https://gbmitchell.github.io/)
